@@ -157,13 +157,19 @@
      });
 
      function exportImage() {
-         var p = 0;
-         while (p < drawPos.length) {
-             drawPos[p].width  = pixelWidth;
-             drawPos[p].height = pixelHeight;
-             p++;
-         }
-         var resp = 'var img = { layers: ' + JSON.stringify(drawPos) + '}';
+         const design = new Array(dimHeight * dimWidth);
+         design.fill('0x000000');
+         drawPos.forEach(({x, y, color}) => design[Math.floor(y/pixelHeight * dimHeight + x/pixelWidth)] = color);
+         const resp = `
+void patternX() {
+  const int totalNum = ${dimHeight * dimWidth};
+  CRGB design[totalNum] = {${design.join(', ')}};
+  for (int i = 0; i < totalNum;i++) {
+    leds[i] = design[i];
+  }
+  brightness = BRIGHTNESS;
+}
+         `;
          document.getElementById('data').innerHTML = resp;
      }
     </script>
