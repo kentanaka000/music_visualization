@@ -11,7 +11,6 @@
 #define NUM_LEDS    10
 #define BRIGHTNESS  32
 #define LED_TYPE    WS2811
-#define COLOR_ORDER GRB
 
 //LED vars
 CRGB leds[NUM_LEDS];
