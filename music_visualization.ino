@@ -2,20 +2,19 @@
 #include <FastLED.h>
 
 //FFT constants
-#define SAMPLES 128             //Must be a power of 2
+#define SAMPLES 8            //Must be a power of 2
 #define SAMPLING_FREQUENCY 1000 //Hz, must be less than 10000 due to ADC
 #define SAMPLE_PIN 5
 
 //LED constants
 #define LED_PIN     3
-#define NUM_LEDS    11
+#define NUM_LEDS    500
 #define BRIGHTNESS  32
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
 
 //LED vars
 CRGB leds[NUM_LEDS];
-CRGB off[NUM_LEDS];
 int brightness = 32;
 int dimPeriod = 10;
 unsigned long dimTimer;
@@ -24,7 +23,7 @@ unsigned long dimTimer;
 //FFT vars
 arduinoFFT FFT = arduinoFFT();
  
-unsigned int sampling_period_us;
+unsigned long sampling_period_us;
 unsigned long microseconds;
  
 double vReal[SAMPLES];
@@ -44,9 +43,7 @@ double highPrevAvg;
 int highCount;
 
 //designs
-CRGB designA[NUM_LEDS] {CRGB::Red, CRGB::White, CRGB::Red, CRGB::White,CRGB::Red, CRGB::White,CRGB::Red, CRGB::White, CRGB::Red} ;
-CRGB designB[NUM_LEDS] {CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Purple, CRGB::Red, CRGB::Orange, CRGB::Yellow};
-CRGB designC[NUM_LEDS] {CRGB::White,CRGB::White,CRGB::White,CRGB::White,CRGB::White,CRGB::White,CRGB::White,CRGB::White,CRGB::White};
+CRGB colorMap[8] = {CRGB::White, CRGB::Black, CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Purple};
 
  
 void setup() {
@@ -74,7 +71,7 @@ void loop() {
 
         timedDim();
      
-        while(micros() < (microseconds + sampling_period_us)){
+        while(micros() - microseconds < sampling_period_us){
         }
     }
  
@@ -101,7 +98,7 @@ void loop() {
 //        Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
 //    }
 
-    // Show plot
+//     Show plot
 //    for(int i=0; i<(SAMPLES/2); i++)
 //    {         
 //        Serial.println(vReal[i], 1);   
@@ -148,8 +145,6 @@ void loop() {
     baseAvg = 0;
     midAvg = 0;
     highAvg = 0;
-//
-//    while(1);
 }
 
 void timedDim() {
@@ -166,21 +161,21 @@ void timedDim() {
 
 void patternA() {
   for (int i = 0; i < NUM_LEDS;i++) {
-    leds[i] = designA[i];
+    leds[i] = CRGB::White;
   }
   brightness = BRIGHTNESS;
 }
 
 void patternB() {
   for (int i = 0; i < NUM_LEDS;i++) {
-    leds[i] = designB[i];
+    leds[i] = CRGB::Red;
   }
   brightness = BRIGHTNESS;
 }
 
 void patternC() {
   for (int i = 0; i < NUM_LEDS;i++) {
-    leds[i] = designC[i];
+    leds[i] = CRGB::Blue;
   }
   brightness = BRIGHTNESS;
 }
