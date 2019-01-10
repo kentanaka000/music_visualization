@@ -9,11 +9,15 @@
 //LED constants
 #define LED_PIN     3
 #define NUM_LEDS    10
-#define BRIGHTNESS  32
+#define MAX_BRIGHTNESS  32
 #define LED_TYPE    WS2811
+#define COLOR_ORDER GRB
 
 //LED vars
 CRGB leds[NUM_LEDS];
+CRGB rainbowColors[6] = {CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Purple};
+int colorIndex = 0;
+unsigned long changeTimer;
 
 //FFT vars
 arduinoFFT FFT = arduinoFFT();
@@ -30,7 +34,9 @@ void setup() {
 
     delay( 2000 ); // power-up safety delay
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-    FastLED.setBrightness(  BRIGHTNESS );
+    FastLED.setBrightness(  MAX_BRIGHTNESS );
+
+    changeTimer = millis();
 }
 
  
@@ -54,6 +60,11 @@ void loop() {
     FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
     int peakBin = (int)peak * SAMPLES / SAMPLING_FREQUENCY;
+    int averageLoudness = 0;
+    for (int i = 2; i < (SAMPLES/2); i++) {
+      averageLoudness += vReal[i];
+    }
+    averageLoudness /= SAMPLES/2 - 2;
 
 
     // SHOWING RESULTS
@@ -71,23 +82,15 @@ void loop() {
 //        Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
 //    }
 
-    CRGB fillColor;
     
-    if (vReal[peakBin] > 1500 && peakBin > 2) {
-      if(peak < 150) {
-        fillColor = CRGB::Blue;
-      }
-      else if(peak < 300) {
-        fillColor = CRGB::Red;
-      }
-      else {
-        fillColor = CRGB::White;
-      }
+    if ((vReal[peakBin] > averageLoudness + 400 || (vReal[peakBin] > 1000 && peakBin > 1)) && millis() - changeTimer > 200) {
+      colorIndex += 1;
 
       for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = fillColor;
+        leds[i] = rainbowColors[colorIndex];
       }
-      FastLed.show();
+      changeTimer = millis();
+      FastLED.show();
     }
     
 }
