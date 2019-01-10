@@ -8,7 +8,7 @@
 
 //LED constants
 #define LED_PIN     3
-#define NUM_LEDS    10
+#define NUM_LEDS    8
 #define MAX_BRIGHTNESS  32
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
@@ -58,8 +58,10 @@ void loop() {
     FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
     FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
     FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+    
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
     int peakBin = (int)peak * SAMPLES / SAMPLING_FREQUENCY;
+
     int averageLoudness = 0;
     for (int i = 2; i < (SAMPLES/2); i++) {
       averageLoudness += vReal[i];
@@ -85,6 +87,9 @@ void loop() {
     
     if ((vReal[peakBin] > averageLoudness + 400 || (vReal[peakBin] > 1000 && peakBin > 1)) && millis() - changeTimer > 200) {
       colorIndex += 1;
+      if (colorIndex > 6) {
+        colorIndex = 0;
+      }
 
       for (int i = 0; i < NUM_LEDS; i++) {
         leds[i] = rainbowColors[colorIndex];
