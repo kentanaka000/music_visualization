@@ -15,7 +15,7 @@
 
 //LED vars
 CRGB leds[NUM_LEDS];
-CRGB rainbowColors[6] = {CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Purple};
+CRGB rainbowColors[6] = {CRGB::Red, CRGB::Green, CRGB::Orange, CRGB::Blue, CRGB::Yellow,  CRGB::Purple};
 int colorIndex = 0;
 unsigned long changeTimer;
 
