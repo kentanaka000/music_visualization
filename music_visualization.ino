@@ -2,13 +2,13 @@
 #include <FastLED.h>
 
 //FFT constants
-#define SAMPLES 8            //Must be a power of 2
+#define SAMPLES 64            //Must be a power of 2
 #define SAMPLING_FREQUENCY 1000 //Hz, must be less than 10000 due to ADC
 #define SAMPLE_PIN 5
 
 //LED constants
 #define LED_PIN     3
-#define NUM_LEDS    500
+#define NUM_LEDS    40
 #define BRIGHTNESS  32
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
@@ -42,8 +42,7 @@ double highAvg;
 double highPrevAvg;
 int highCount;
 
-//designs
-CRGB colorMap[8] = {CRGB::White, CRGB::Black, CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Purple};
+
 
  
 void setup() {
