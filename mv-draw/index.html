@@ -159,7 +159,7 @@
      function exportImage() {
          const design = new Array(dimHeight * dimWidth);
          design.fill('0x000000');
-         drawPos.forEach(({x, y, color}) => design[Math.floor(y/pixelHeight * dimHeight + x/pixelWidth)] = color);
+         drawPos.forEach(({x, y, color}) => design[Math.floor(y/pixelHeight * dimHeight + x/pixelWidth)] = color.replace('#', '0x'));
          const resp = `
 void patternX() {
   const int totalNum = ${dimHeight * dimWidth};
